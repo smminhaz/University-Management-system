@@ -1,0 +1,29 @@
+﻿@using GridMvc.Html
+@model IEnumerable<UniversityManagementSystem.Models.Teacher>
+
+@{
+    ViewBag.Title = "Teacher Information";
+}
+
+<hr/>
+<h2>Teacher Information</h2>
+<hr />
+<p>
+    @Html.ActionLink("Add Teacher", "Save")
+</p>
+
+<p>
+    @Html.Grid(Model).Columns(columns =>
+      {
+          columns.Add(t => t.Name)
+          .Titled("Name");
+          columns.Add(t => t.Address)
+          .Titled("Address");
+          columns.Add(t => t.Email)
+         .Titled("Email");
+          columns.Add(t => t.Contact)
+              .Titled("Contact");
+          
+
+      }).WithPaging(5).Sortable();
+</p>

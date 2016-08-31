@@ -1,0 +1,121 @@
+﻿@{
+    ViewBag.Title = "Enroll Student In a Course";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/jquery-ui.css" rel="stylesheet" />
+
+<div>
+    <hr />
+    <h2 class="slideshow">Enroll In a Course</h2>
+    <hr/>
+
+    @if (ViewBag.Message != null)
+    {
+       <p style="font-size:20px;color:olivedrab">@ViewBag.Message</p>
+    }
+    <form id="enrollCourse" method="POST">
+        <div class="form-group">
+            <label for="StudentId">Registration No</label>
+            <select id="StudentId" name="StudentId" class="form-control">
+                <option value="">Select....</option>
+                @foreach (var student in ViewBag.Students)
+                {
+                    <option value="@student.Id">@student.RegNo</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="Name">Name</label>
+            <input type="text" class="form-control" id="Name" readonly="readonly" name="Name" placeholder="This Field Is Read Only">
+        </div>
+        <div class="form-group">
+            <label for="Email">Email</label>
+            <input type="text" class="form-control" id="Email" readonly="readonly" name="Email" placeholder="This Field Is Read Only">
+        </div>
+        <div class="form-group">
+            <label for="DepartmentId">Department</label>
+            <input type="text" class="form-control" id="DepartmentId" name="DepartmentId" readonly="readonly" placeholder="This Field Is Read Only"/>
+        </div>
+        <div class="form-group">
+            <label for="CourseId">Course</label>
+            <select id="CourseId" name="CourseId" class="form-control">
+                <option value="">Select....</option>
+            </select></div>
+        <div class="form-group">
+            <label for="EnrollDate">Date</label>
+            <input type="text" class="form-control" id="EnrollDate" name="EnrollDate" value="@DateTime.Now.ToShortDateString()">
+        </div>
+       
+        <button type="submit" class="btn btn-default">Enroll</button>
+    </form>
+</div>
+
+    @section scripts{
+        
+        
+<script src="~/Scripts/jquery-2.2.0.js"></script>
+        <script src="~/Scripts/jquery.validate.js"></script>
+<script src="~/Scripts/jquery-ui.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#EnrollDate').datepicker();
+                $("#enrollCourse").validate({
+                    rules: {
+                        StudentId: "required",
+                        CourseId: "required",
+                        EnrollDate:"required"
+                    },
+                    messages: {
+                        StudentId:"Please select student Registration No",
+                        CourseId: "Please select Course",
+                        EnrollDate:"Select the date"
+                    }
+                });
+
+                $("#StudentId").change(function () {
+                    var stId = $("#StudentId").val();
+                    $("#CourseId").empty();
+                    var json = { studentId: stId };
+
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("GetStudentById", "EnrollStudentInCourse")',
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(json),
+                        success: function (data) {
+                            //alert(data);
+
+                            var name = data.Name;
+                            var email = data.Email;
+                            var dept = data.Department;
+                            $("#Name").val(name);
+                            $("#Email").val(email);
+                            $("#DepartmentId").val(dept);
+                        }
+                    });
+
+
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("GetCourseByStudentId", "EnrollStudentInCourse")',
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(json),
+                        success: function (data) {
+
+
+                            $.each(data, function (key, value) {
+                                //alert(key);
+                                $("#CourseId").append('<option value=' + value.Id + '>' + value.Name + '</option>');
+
+                            });
+                        }
+                    });
+
+                });
+            });
+        </script>
+        
+
+
+
+    }

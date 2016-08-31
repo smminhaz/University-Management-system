@@ -1,0 +1,235 @@
+﻿@{
+    ViewBag.Title = "Assign Course to Teacher";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+    <hr/>
+
+    <h2 style="font-size:30px;color:blue">Course Assign To Teacher</h2>
+    <hr />
+
+    @if (ViewBag.Message != null)
+    {
+       <p style="font-size:20px;color: olivedrab">@ViewBag.Message</p>
+
+    }
+
+    <form id="courseAssignToteacher" method="POST">
+       
+        <table class="form-group">
+            <tr>
+                <td>
+                    <label for="DepartmentId">Department</label>
+                </td>
+                <td>
+                    <select id="DepartmentId" name="DepartmentId" class="form-control">
+                        <option value="">Select Department....</option>
+
+                        @foreach (var dept in ViewBag.Departments)
+                        {
+                            <option value="@dept.Id">@dept.Name</option>
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="TeacherId">Teacher</label>
+                </td>
+                <td>
+                    <select id="TeacherId" name="TeacherId" class="form-control">
+                        <option value="">Select Teacher....</option>
+
+                    </select>
+                </td>
+            </tr>
+           
+            <tr>
+                <td>
+                    <label for="CreditTobeTaken">Credit To be Taken</label>
+                </td>
+                <td>
+                    <input type="text" id="CreditTobeTaken" class="form-control" name="CreditTobeTaken" readonly="readonly" placeholder="This field is read only " />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="CreditTaken">Remaing Credit</label>
+                </td>
+                <td>
+                    <input type="text" id="CreditTaken" class="form-control" name="CreditTaken" readonly="readonly" placeholder="This field is read only " />
+                </td>
+            </tr>
+           
+            <tr>
+                <td>
+                    <label for="CourseId">Course</label>
+                </td>
+                <td>
+                    <select id="CourseId" name="CourseId" class="form-control">
+                        <option value="">Select ....</option>
+                        
+                    </select>
+                </td>
+
+            </tr>
+            <tr>
+                <td>
+                    <label for="Name">Name</label>
+                </td>
+                <td>
+                    <input type="text" id="Name" class="form-control" name="Name" readonly="readonly" placeholder="This field is read only " />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="Credit">Credit</label>
+                </td>
+                <td>
+                    <input type="text" id="Credit" class="form-control" name="Credit" readonly="readonly" placeholder="This field is read only " />
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" value="Assign" class="btn btn-default" id="submitButton" />
+                </td>
+            </tr>
+        </table>
+
+    </form>
+
+</div>
+
+
+@section Scripts {
+    <script src="~/Scripts/jquery-2.2.0.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    
+    <script>
+    $(document).ready(function () {
+        $('#submitButton').click(function () {
+            var val1 = parseFloat($('#CreditTaken').val());
+            var val2 = parseFloat($('#Credit').val());
+            var val = val1 - val2;
+            if (val < 0) {
+                var flag = confirm('Remaining credit is ' + val + '. Are you sure, you want to assign more credit?');
+                if (flag == false)
+                    return false;
+            }
+            return true;
+        });
+
+        $("#courseAssignToteacher").validate({
+            rules: {
+                
+                TeacherId: "required",
+             
+                DepartmentId: "required",
+                CourseId: "required"
+                },
+            messages: {
+                
+                TeacherId: "Please select the teacher Name!",
+ 
+                DepartmentId: "Please select department!",
+                CourseId: "Please select semester!"
+            }
+        });
+
+        $("#DepartmentId").change(function () {
+            var deptId = $("#DepartmentId").val();
+            $("#TeacherId").empty();
+            $("#CourseId").empty();
+            $("#CourseId").append('<option value=' + "" + '>--Select Course--</option>');
+            $("#TeacherId").append('<option value=' + "" + '>--Select Course--</option>');
+            var json = { departmentId: deptId, };
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetTeachersByDepartmentId", "CourseAssignToTeacher")',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(json),
+                success: function (data) {
+
+                    $.each(data, function (key, value) {
+                        //alert(key);
+                        $("#TeacherId").append('<option value=' + value.Id + '>' + value.Name + '</option>');
+
+                    });
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetCoursesByDepartmentId", "CourseAssignToTeacher")',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(json),
+                success: function (data) {
+                   
+                    $.each(data, function (key, value) {
+                        
+                        $("#CourseId").append('<option value=' + value.Id + '>' + value.Code + '</option>');
+
+                    });
+                }
+            });
+
+
+        });
+
+        //--------------show teacher information in textbx----
+
+        $("#TeacherId").change(function () {
+            var id = $("#TeacherId").val();
+
+            var json = { teacherId: id, };
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetTeacherById", "CourseAssignToTeacher")',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(json),
+                success: function (data) {
+                  
+
+                    var creditTakenTobeTaken = data.CreditTobeTaken;
+                    var remainingCredit = (data.CreditTaken);
+                    var creditT = creditTakenTobeTaken - remainingCredit;
+                    $("#CreditTobeTaken").val(creditTakenTobeTaken);
+                    $("#CreditTaken").val(creditT);
+
+
+                }
+            });
+
+
+        });
+        //-------------show Course information in textbx----
+
+        $("#CourseId").change(function () {
+            var id = $("#CourseId").val();
+            var json = { courseId: id }
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetCourseById", "CourseAssignToTeacher")',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(json),
+                success: function (data) {
+                    var name = data.Name;
+                    var credit = data.Credit;
+                    $("#Name").val(name);
+                    $("#Credit").val(credit);
+
+                }
+            });
+
+
+        });
+
+
+    });
+    </script>
+
+}

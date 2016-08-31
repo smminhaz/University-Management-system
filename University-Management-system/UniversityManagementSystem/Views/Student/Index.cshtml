@@ -1,0 +1,30 @@
+﻿@using GridMvc.Html
+@model IEnumerable<UniversityManagementSystem.Models.Student>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Student Information</h2>
+
+<p>
+    @Html.ActionLink("Add Student", "Save")
+</p>
+<p>
+    @Html.Grid(Model).Columns(columns =>
+      {
+          columns.Add(st => st.RegNo)
+          .Titled("Registration No");
+          columns.Add(st => st.Name)
+          .Titled("Name");
+          columns.Add(st => st.Email)
+          .Titled("Email");
+          columns.Add(st => st.Contact)
+            .Titled("Mobile");
+
+          columns.Add(st => st.Address)
+           .Titled("Address");
+         
+
+      }).WithPaging(4).Sortable().WithMultipleFilters();
+</p>

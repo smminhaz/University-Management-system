@@ -1,0 +1,63 @@
+﻿@model UniversityManagementSystem.Models.TempClassSchedule
+@{
+    ViewBag.Title = "View Class Schedule";
+}
+
+<hr/>
+<h2>View Class Schedule and Room Allocation Information</h2>
+<hr/>
+<div class="container">
+    <fieldset>
+        
+
+        <table class="table table-striped">
+            <tr>
+                <td>@Html.LabelFor(x => x.DepartmentId)</td>
+                <td>
+                    <select id="DepartmentId" class="form-control">
+                        <option value="">Select department</option>
+                        @foreach (var dept in ViewBag.Departments)
+                        {
+                            <option value="@dept.Id">@dept.Name</option>
+                        }
+                    </select>
+
+                </td>
+                <td>@Html.ValidationMessageFor(m => m.DepartmentId)</td>
+            </tr>
+        </table>
+        <table id="SchduleTable" class=" table table-hover table-bordered">
+            <thead class="table-striped">
+                <tr>
+                    <th style="width: 150px;">Course Code</th>
+                    <th style="width: 220px;">Course Name</th>
+                    <th style="width: 350px;">Schedule Info</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </fieldset>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#DepartmentId").change(function () {
+                $('#SchduleTable tbody').empty();
+                var deptId = $("#DepartmentId").val();
+                var json = { departmentId: deptId, };
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetClassScheduleByDepartment", "ClassRoom")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (data) {
+                        $.each(data, function (key, value) {
+                            $("#SchduleTable tbody").append('<tr><td>' + value.CourseCode + '</td><td>' + value.CourseName + '</td><td>' + value.ScheduleInfo + '</td></tr>');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

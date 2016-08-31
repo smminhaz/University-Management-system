@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title Void University</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/PagedList.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-2.2.0.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <link href="~/Content/Style.css" rel="stylesheet" />
+    <link href="~/Content/mobiscroll-2.9.5.full.min.css" rel="stylesheet" />
+    <link href="~/Content/css/style.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+  
+</head>
+<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active">@Html.ActionLink("Home", "Index", "Home") <span class="sr-only">(current)</span></li>
+                    
+                    
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Department <span class="caret"></span></a>
+                        <ul class="dropdown-menu ">
+                            <li>@Html.ActionLink("Save Department", "Save", "Department")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("View All Departments", "Index", "Department")</li> 
+                        </ul>
+                    </li>
+                    
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Course <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Save Course", "Save", "Course")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("View Course Statics", "ShowCourseStatics", "CourseView")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Unassign All Courses", "UnAssign", "UnAssignCourses")</li>
+                            
+                        </ul>
+                    </li>
+                    
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Teacher <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Save Teacher", "Save", "Teacher")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Assign Course To Teacher", "AssignCourseToTeacher", "CourseAssignToTeacher")</li>
+
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Student <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Register Student", "Save", "Student")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Enroll Student In A Course", "Enroll", "EnrollStudentInCourse")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Save Student Result", "Save", "StudentResult")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("View Result", "ViewStudentResult", "StudentResult")</li>
+
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Class Room Allocation <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Allocate Classroom", "Save", "ClassRoom")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("View Class Schedule", "Index", "ClassRoom")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Unallocate All Classrooms", "UnAllocateClassRoom", "ClassRoom")</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container body-content">
+        
+        @RenderBody()
+        <hr />
+        
+        <footer>
+           <p>&copy; <i>@DateTime.Now.Year - All right Reserved Void Group BITM</i></p>
+        </footer>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/jquery-2.2.0.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Content/Scripts/bootstrap-hover-dropdown.min.js"></script>
+    <script src="~/Scripts/mobiscroll-2.9.5.full.min.js"></script>
+    
+    <script>
+        $(function() {
+            $("ul.nav li.dropdown").hover(function() {
+                $(".dropdown-menu", this).fadeIn();
+            }, function() {
+                $(".dropdown-menu", this).fadeOut("fast");
+            });
+        })
+    </script>
+    
+   @RenderSection("scripts", required: false)
+</body>
+</html>

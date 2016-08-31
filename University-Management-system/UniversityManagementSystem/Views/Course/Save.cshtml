@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "Add Course";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+
+    <hr />
+    <h2>Save Course</h2>
+    <hr />
+
+    @if (ViewBag.Mgs != null)
+    {
+        <p style="font-size:30px;color:olivedrab">@ViewBag.Mgs</p>
+
+    }
+
+    <form id="saveCourseForm" method="POST">
+        <div class="form-group">
+            <label for="Code">Code</label>
+            <input type="text" class="form-control" id="Code" name="Code" placeholder="Enter Code">
+        </div>
+        <div class="form-group">
+            <label for="Name">Name</label>
+            <input type="text" class="form-control" id="Name" name="Name" placeholder="Enter Name">
+        </div>
+        <div class="form-group">
+            <label for="Credit">Credit</label>
+            <input type="text" class="form-control" id="Credit" name="Credit" placeholder="Enter Credit">
+        </div>
+        <div class="form-group">
+            <label for="Description">Description</label>
+            <textarea class="form-control" id="Description" name="Description" placeholder="Write Description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="DepartmentId">Department</label>
+            <select id="DepartmentId" name="DepartmentId">
+                <option value="">Select Department....</option>
+
+                @foreach (var dept in ViewBag.Departments)
+                {
+                    <option value="@dept.Id">@dept.Name</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="SemesterId">Semester</label>
+            <select id="SemesterId" name="SemesterId">
+                <option value="">Select Semester....</option>
+
+                @foreach (var dept in ViewBag.Semesters)
+                {
+                    <option value="@dept.Id">@dept.Name</option>
+                }
+            </select>
+
+        </div>
+        <button type="submit" class="btn btn-default">Save</button>
+    </form>
+
+</div>
+
+@section scripts
+{
+
+    <script src="~/Scripts/jquery-2.2.0.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#saveCourseForm").validate({
+                rules: {
+                    Code: {
+                        required: true,
+                        minlength: 5
+                    },
+                    Name: "required",
+                    Description: "required",
+                    Credit: {
+                        required: true,
+                        number: true,
+                        range: [0.5, 5.00]
+
+                    },
+
+                    DepartmentId: "required",
+                    SemesterId: "required"
+
+                },
+                messages: {
+                    Code: {
+                        required: "Please enter a valid Course Code!",
+                        minlength: "Code must be at least 5 charecter! !"
+                    },
+
+                    Name: "Please enter the valid Course Name!",
+                    Description: "Write something about course!",
+                    Credit: {
+                        required: "Credit is required!",
+                        number: "Please! Enter numeric figure only!",
+                        range: "Credit must be beween 0.5 and 5.00"
+                    },
+                    DepartmentId: "Please select related department!",
+                    SemesterId: "Please select related semester!"
+                }
+            });
+        });
+    </script>
+
+}
+

@@ -1,0 +1,189 @@
+﻿@using System
+@{
+    ViewBag.Title = "Student Result";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script language="javascript">
+    
+
+    function myPrint() {
+        var myPrintContent = document.getElementById('printDIV');
+        var myPrintWindow = window.open('left=300,top=100,width=400,height=400');
+        myPrintWindow.document.write(myPrintContent.innerHTML);
+        myPrintWindow.document.getElementById('hiddenDiv').style.display = 'block';
+        myPrintWindow.document.close();
+        myPrintWindow.focus();
+        myPrintWindow.print();
+        myPrintWindow.close();
+        return false;
+    }
+</script>
+<div>
+    <form id="viewStudentResult">
+        <hr/>
+        <h2> View Student Result</h2>
+        <hr />
+        <table>
+            <tr>
+                <td>
+                    <label for="StudentId">Student Reg. No</label>
+                </td>
+                <td>
+                    <select id="StudentId" name="StudentId">
+                        <option value="">Select.....</option>
+                        @foreach (var student in ViewBag.Students)
+                        {
+                            <option value="@student.Id">@student.RegNo</option>
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="Name">Name</label>
+                </td>
+                <td>
+                    <input type="text" id="Name" name="Name" readonly="readonly" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="Email">Email</label>
+                </td>
+                <td>
+                    <input type="text" id="Email" name="Email" readonly="readonly" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="Department">Department</label>
+                </td>
+                <td>
+                    <input type="text" id="Department" name="Department" readonly="readonly" />
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                  
+                    <input type="submit" value="Make PDF" onclick="myPrint();" />
+                </td>
+            </tr>
+        </table>
+        <div id="studenRsult">
+            <div id="printDIV">
+                <div id="hiddenDiv" align="center" style="display: none">
+                    <table width="100%" style="margin-bottom: 25px;">
+                        <tr>
+                            <td><img src="~/images/home_1.jpg" style="width: 120px; height: 90px; border-radius: 25px 0px;" /></td>
+                            <td>
+                                <h2>Void University Bangladesh</h2>
+                            </td>
+                        </tr>
+                    </table>
+                    <h3 style="text-align: center; background-color: black; padding: 5px 10px; color: white; border-radius: 10px;">Academic Transcript</h3>
+                    <table style="width: 100%">
+                        <tr>
+                            <td width="30%">Name: </td>
+                            <td width="70%"><label id="printName" style="font-weight: bold; "></label></td>
+                        </tr>
+                        <tr>
+                            <td>Email:</td>
+                            <td><label id="printEmail"></label></td>
+                        </tr>
+                        <tr>
+                            <td>Department:</td>
+                            <td><label id="printDepartment"></label></td>
+                        </tr>
+                    </table>
+                    <br />
+                    <br />
+
+                    <table class="table table-bordered" style="border: 1px solid black; width: 100%; border-collapse: collapse; margin-bottom: 100px;">
+                        <tr>
+                            <th style="border: 1px solid black;">Code</th>
+                            <th style="border: 1px solid black;">Name</th>
+                            <th style="border: 1px solid black;">Grade</th>
+                        </tr>
+                        <tbody id="myDataPrint"></tbody>
+                    </table>
+
+                    <table width="100%">
+                        <tr>
+                            <td><p style="text-align: left;">Date  of Publication of Result: @DateTime.Now.ToString("dd-MMM-yyyy")</p></td>
+                            <td><h4 style="text-align: right;">Controller of Examination</h4></td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+            <table class="table table-bordered" style="border: 1px solid black; width: 100%; border-collapse: collapse;">
+
+                <caption style="font-size: 30px; font-weight: bolder; margin-bottom: 20px">Result</caption>
+                <tr>
+                    <th style="border: 1px solid black; ">Code</th>
+                    <th style="border: 1px solid black;">Name</th>
+                    <th style="border: 1px solid black;">Grade</th>
+                </tr>
+                <tbody id="myData"></tbody>
+            </table>
+        </div>
+    </form>
+</div>
+@section scripts{
+    <script src="~/Scripts/jquery-2.2.0.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#StudentId").change(function () {
+                var stId = $("#StudentId").val();
+
+                $("#myData").empty();
+                var json = { studentId: stId };
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetStudentById", "StudentResult")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (data) {
+                        //alert(data);
+
+                        var name = data.Name;
+                        var email = data.Email;
+                        var dept = data.Department;
+                        $("#Name").val(name);
+                        $("#Email").val(email);
+                        $("#Department").val(dept);
+                        $("#printName").text(name);
+                        $("#printEmail").text(email);
+                        $("#printDepartment").text(dept);
+
+                    }
+                });
+
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetStudentResultByStudentId", "StudentResult")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (data) {
+
+                        var i = 0;
+
+                        $.each(data, function (index, value) {
+
+                            var row = $("<tr><td style='border: 1px solid black; padding: 5px 10px;'>" + value.Code + "</td><td style='border: 1px solid black; padding: 5px 10px;'>" + value.Name + "</td><td style='border: 1px solid black; padding: 5px 10px;'>" + value.Grade + "</td></tr>");
+                            $("#myData").append(row);
+                            var row2 = $("<tr><td style='border: 1px solid black; padding: 5px 10px;'>" + value.Code + "</td><td style='border: 1px solid black; padding: 5px 10px;'>" + value.Name + "</td><td style='border: 1px solid black; padding: 5px 10px;'>" + value.Grade + "</td></tr>");
+                            $("#myDataPrint").append(row2);
+
+                        });
+                    }
+                });
+
+            });
+
+        });
+    </script>
+}

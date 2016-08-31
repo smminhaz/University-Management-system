@@ -1,0 +1,14 @@
+﻿footer {
+    text-align: center;
+}
+
+#showCourseStatics {
+    width: 100%;
+     border: 1px solid sienna;
+}
+
+
+label.error {
+    color: red;
+    font-style: italic;
+}

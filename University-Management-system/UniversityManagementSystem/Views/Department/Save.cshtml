@@ -1,0 +1,50 @@
+﻿@model UniversityManagementSystem.Models.Department
+
+@{
+    ViewBag.Title = "Add Department";
+    
+}
+<script src="~/Scripts/jquery-2.2.0.js"></script>
+<script src="~/Scripts/jquery.validate.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+<hr />
+<h2> Save Department</h2>
+<hr />
+@using (Html.BeginForm())
+{
+    if (ViewBag.Mgs != null)
+    {
+        <p style="font-size:30px; color:blue">@ViewBag.Mgs</p>
+    }
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+       
+       
+      
+        @Html.ValidationSummary(true)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Code, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Code)
+                @Html.ValidationMessageFor(model => model.Code)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name)
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+   
+}

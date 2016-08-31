@@ -1,0 +1,31 @@
+﻿
+@{
+    ViewBag.Title = "UnAssign";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<hr/>
+<h2>Unassign All Courses</h2>
+<hr />
+@if (ViewBag.Message != null)
+{
+   <p style="font-size:20px;color:olivedrab">@ViewBag.Message</p>
+}
+<form method="POST">
+    <input type="submit" value="Unassign Courses" data-confirm="Are you sure to UnAssign All Courses?" />
+
+</form>
+
+@section scripts{
+    
+    <script src="~/Scripts/jquery-2.2.0.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script>
+        $(document).ready(function() {
+            jQuery('[data-confirm]').click(function (e) {
+                if (!confirm(jQuery(this).attr("data-confirm"))) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+}

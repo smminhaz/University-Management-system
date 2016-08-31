@@ -1,0 +1,166 @@
+﻿@model UniversityManagementSystem.Models.ClassRoom
+
+@{
+    ViewBag.Title = "Add Class Schedule";
+   
+}
+<link href="~/Content/mobiscroll-2.9.5.full.min.css" rel="stylesheet" />
+<hr />
+<h2>Allocate Classrooms</h2>
+<hr />
+@if (ViewBag.Message != null)
+{
+   <p style="font-size:20px;color:olive">@ViewBag.Message</p>
+}
+
+@using (Html.BeginForm(null,null,FormMethod.Post,new {id="saveClassScedule"})) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+       
+        
+        @Html.ValidationSummary(true)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DepartmentId, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select id="DepartmentId" name="DepartmentId" class="form-control">
+                    <option value="">Select.....</option>
+                    @foreach (var dept in ViewBag.Departments)
+                    {
+                        <option value="@dept.Id">@dept.Name</option>
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.DepartmentId)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CourseId, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select id="CourseId" name="CourseId" class="form-control">
+                    <option value="">Select.....</option>
+                   
+                </select>
+                @Html.ValidationMessageFor(model => model.CourseId)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.RoomId, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select id="RoomId" name="RoomId" class="form-control">
+                    <option value="">Select.....</option>
+                    @foreach (var room in ViewBag.Rooms)
+                    {
+                        <option value="@room.Id">@room.Name</option>
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.RoomId)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DayId, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select id="DayId" name="DayId" class="form-control">
+                    <option value="">Select.....</option>
+                    @foreach (var day in ViewBag.Days)
+                    {
+                        <option value="@day.Id">@day.Name</option>
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.DayId)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StartTime, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+               @Html.TextBoxFor(model => model.StartTime)
+                @Html.ValidationMessageFor(model => model.StartTime)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Endtime, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+               @Html.TextBoxFor(model=>model.Endtime)
+                @Html.ValidationMessageFor(model => model.Endtime)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back", "Index")
+</div>
+@section scripts{
+    
+    <script src="~/Scripts/jquery-2.2.0.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+<script src="~/Scripts/mobiscroll-2.9.5.full.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#StartTime").mobiscroll({ preset: 'time', 'theme': 'android' });
+            $("#Endtime").mobiscroll({ preset: 'time', 'theme': 'android' });
+
+            $("#saveClassScedule").validate({
+                rules: {
+                    CourseId: "required",
+                    RoomId: "required",
+                    DayId: "required",
+                    StartTime: "required",
+                    DepartmentId: "required",
+                    Endtime: "required"
+
+                },
+                messages: {
+                    CourseId: "Please Select  Course!",
+
+                    RoomId: "Please Select room!",
+                    DayId: "Please Select day!",
+                    StartTime:"Select Start time!",
+                    DepartmentId: "Please select department!",
+                    Endtime: "Please select End time!"
+                }
+            });
+
+            $("#DepartmentId").change(function () {
+                var deptId = $("#DepartmentId").val();
+                $("#CourseId").empty();
+                $("#CourseId").append('<option value="">Select Course</option>');
+
+                var json = { departmentId: deptId, };
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetCoursesByDepartmentId", "ClassRoom")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (data) {
+                        //alert(data);
+                        $.each(data, function (key, value) {
+                            //alert(key);
+                            $("#CourseId").append('<option value=' + value.Id + '>' + value.Code + '</option>');
+
+                        });
+                    }
+                });
+
+
+            });
+
+
+
+        });
+    </script>
+
+}

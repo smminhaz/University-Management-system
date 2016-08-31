@@ -1,0 +1,179 @@
+﻿@model UniversityManagementSystem.Models.StudentResult
+@{
+    ViewBag.Title = "Add Student Result";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<hr/>
+<h2>Save Student Result</h2>
+<hr />
+
+<div>
+
+    <form id="saveStudentResult" method="POST">
+
+        @if (ViewBag.Message!=null)
+        {
+           <p style="font-size:20px;color:olivedrab">@ViewBag.Message</p> 
+        }
+        <div>
+
+            <table>
+                <tr>
+                    
+                    <td>
+                        @Html.LabelFor(s=>s.StudentId)
+                    </td>
+                    <td>
+                        <select id="StudentId" name="StudentId" class="form-control">
+                            <option value="">Select.....</option>
+                            @foreach (var student in ViewBag.Students)
+                            {
+                                <option value="@student.Id">@student.RegNo</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="Name">Name</label>
+                    </td>
+                    <td>
+                        <input type="text" id="Name" class="form-control" name="Name" readonly="readonly"  />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="Email">Email</label>
+                    </td>
+                    <td>
+                        <input type="text" id="Email" class="form-control" name="Email" readonly="readonly" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="Department">Department</label>
+                    </td>
+                    <td>
+                        <input type="text" id="Department" class="form-control" name="Department" readonly="readonly" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <label for="CourseId">Course</label>
+                    </td>
+                    <td>
+                        <select id="CourseId" name="CourseId" class="form-control">
+                            <option value="">Select.....</option>
+
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="Grade">Grade</label>
+                    </td>
+                    <td>
+                        <select id="Grade" name="Grade" class="form-control">
+                            <option value="">Select Grade</option>
+                            <option value="A+">A+</option>
+                            <option value="A">A</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B">B</option>
+                            <option value="B-">B-</option>
+                            <option value="C+">C+</option>
+                            <option value="C">C</option>
+                            <option value="C-">C-</option>
+                            <option value="D+">D+</option>
+                            <option value="D">D</option>
+                            <option value="D-">D-</option>
+                            <option value="F">F</option>
+
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="submit" value="Save" class="btn btn-default" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</div>
+@section scripts{
+
+    <script src="~/Scripts/jquery-2.2.0.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#saveStudentResult").validate({
+                rules: {
+                    StudentId: "required",
+                    CourseId: "required",
+                    Grade: "required"
+                },
+                messages: {
+                    StudentId: "Please select the student reg no",
+                    CourseId: "Please select a course",
+                    Grade:"Please select grade"
+                }
+            });
+
+           
+
+
+            $("#StudentId").change(function () {
+                var stId = $("#StudentId").val();
+                $("#CourseId").empty();
+                $("#CourseId").append('<option value="">Select Course</option>');
+                
+                var json = { studentId: stId };
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetStudentById", "StudentResult")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (data) {
+                        //alert(data);
+
+                        var name = data.Name;
+                        var email = data.Email;
+                        var dept = data.Department;
+                        $("#Name").val(name);
+                        $("#Email").val(email);
+                        $("#Department").val(dept);
+                    }
+                });
+
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetCoursesTakebByStudent", "StudentResult")',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    success: function (data) {
+
+
+                        $.each(data, function (key, value) {
+                            //alert(key);
+                            $("#CourseId").append('<option value=' + value.Id + '>' + value.Name + '</option>');
+
+                        });
+                    }
+                });
+
+            });
+
+        });
+    </script>
+}
